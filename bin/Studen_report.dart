@@ -4,7 +4,24 @@ List<Map<String,dynamic>>Students = [];
 final Set<String>availableSubjects={"Math","English","Science","History"};
 
 void Add_Bonus_Points(){
-  if(Students[i])
+
+  for(int i=0;i<Students.length;i++)  print("${i+1}. ${Students[i]['name']}");
+  stdout.write("Choose a students");
+  var std=int.parse(stdin.readLineSync()!);
+  int bonus=-1;
+  while(bonus<1 || bonus>10) {
+    stdout.write("Give bonus between 1 to 10");
+    bonus = int.parse(stdin.readLineSync() ?? '') ?? 0;
+    if(bonus<1 || bonus>10) print("Wrong marks submmited");
+
+  }
+  // ??= assigns ONLY if bonus is currently null
+  Students[std-1]['bonus'] ??= bonus;
+
+  // if-else: check whether ??= actually assigned or skipped
+  if(Students[std-1]['bonus'] == bonus)  print("Number successfully set");
+  else  print("already set");
+
 }
 void Record_Score(){
 
