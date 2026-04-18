@@ -2,6 +2,94 @@ import 'dart:io';
 
 List<Map<String,dynamic>>Students = [];
 final Set<String>availableSubjects={"Math","English","Science","History"};
+void Class_Summary() {
+  if (Students.isEmpty) {
+    print("No students yet! Add a student first (Option 1).\n");
+    return;
+  }
+
+  var allAverages = <double>[];
+  var topName     = '';
+  var topAvg      = -1.0;
+
+  for (var s in Students) {
+    var scores = s['scores'] as List<int>;
+    var bonus  = s['bonus']  as int?;
+    var name   = s['name']   as String;
+
+    if (scores.isEmpty) continue;
+
+    var avg = _average(scores) + (bonus ?? 0);
+    allAverages.add(avg);
+
+    if (avg > topAvg) {
+      topAvg  = avg;
+      topName = name;
+    }
+  }
+
+  if (allAverages.isEmpty) {
+    print("No scores recorded yet.\n");
+    return;
+  }
+
+  var classAvg = allAverages.reduce((a, b) => a + b) / allAverages.length;
+
+  int cA = 0, cB = 0, cC = 0, cD = 0, cF = 0;
+  for (var avg in allAverages) {
+    if      (avg >= 90) cA++;
+    else if (avg >= 80) cB++;
+    else if (avg >= 70) cC++;
+    else if (avg >= 60) cD++;
+    else                cF++;
+  }
+
+  print('''
+===== Class Summary =====
+  Total students  : ${Students.length}
+  Students graded : ${allAverages.length}
+  Class average   : ${classAvg.toStringAsFixed(2)}
+  Class grade     : ${letterGrade(classAvg)}  ${gradeDesc(classAvg)}
+  Top student     : $topName (${topAvg.toStringAsFixed(1)})
+
+  Grade Distribution:
+    A (90–100) : $cA student(s)
+    B (80–89)  : $cB student(s)
+    C (70–79)  : $cC student(s)
+    D (60–69)  : $cD student(s)
+    F (0–59)   : $cF student(s)
+''');
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+
+double _average(List<int> scores) {
+  if (scores.isEmpty) return 0.0;
+  var sum = 0;
+  for (var s in scores) sum += s;
+  return sum / scores.length;
+}
+
+String letterGrade(double avg) {
+  if      (avg >= 90) return 'A';
+  else if (avg >= 80) return 'B';
+  else if (avg >= 70) return 'C';
+  else if (avg >= 60) return 'D';
+  else                return 'F';
+}
+
+String gradeDesc(double avg) {
+  if      (avg >= 90) return '(Excellent)';
+  else if (avg >= 80) return '(Good)';
+  else if (avg >= 70) return '(Satisfactory)';
+  else if (avg >= 60) return '(Needs Improvement)';
+  else                return '(Failing)';
+}
+
+String _bar(int score) {
+  var filled = (score / 10).round().clamp(0, 10);
+  return '[' + ('█' * filled) + ('░' * (10 - filled)) + ']';
+}
 
 void View_Report() {
   if (Students.isEmpty) {
