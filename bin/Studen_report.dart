@@ -3,6 +3,93 @@ import 'dart:io';
 List<Map<String,dynamic>>Students = [];
 final Set<String>availableSubjects={"Math","English","Science","History"};
 
+void View_Report() {
+  if (Students.isEmpty) {
+    print("No students yet! Add a student first (Option 1).\n");
+    return;
+  }
+
+  for (int i = 0; i < Students.length; i++) {
+    print("${i + 1}. ${Students[i]['name']}");
+  }
+
+  stdout.write("Choose a student: ");
+  var chose = int.tryParse(stdin.readLineSync() ?? '') ?? 0;
+
+  if (chose < 1 || chose > Students.length) {
+    print("Invalid student number.\n");
+    return;
+  }
+
+  var s       = Students[chose - 1];
+  var name    = s['name']    as String;
+  var scores  = s['scores']  as List<int>;
+  var bonus   = s['bonus']   as int?;
+  var comment = s['comment'] as String?;
+
+  print('''
+╔══════════════════════════════════╗
+║           REPORT CARD            ║
+╠══════════════════════════════════╣
+║  Student : ${name.padRight(23)}║
+╚══════════════════════════════════╝''');
+
+  if (scores.isEmpty) {
+    print("  No scores recorded yet.\n");
+    return;
+  }
+
+  print("\n  Scores:");
+  for (var score in scores) {
+    print("    • $score  ${_bar(score)}");
+  }
+
+  var rawAvg   = _average(scores);
+  var bonusPts = bonus ?? 0;
+  var finalAvg = rawAvg + bonusPts;
+
+  print("\n  Raw Average  : ${rawAvg.toStringAsFixed(2)}");
+  if (bonus != null) {
+    print("  Bonus Points : +$bonus");
+    print("  Final Average: ${finalAvg.toStringAsFixed(2)}");
+  }
+  print("  Letter Grade : ${letterGrade(finalAvg)}  ${gradeDesc(finalAvg)}");
+
+  // Nullable comment — only shown if not null
+  if (comment != null) {
+    print("\n  Teacher's Note: \"$comment\"");
+  }
+  print('');
+}
+
+
+void View_All() {
+  if (Students.isEmpty) {
+    print("No students yet! Add a student first (Option 1).\n");
+    return;
+  }
+
+  print("\n===== All Students =====");
+  for (int i = 0; i < Students.length; i++) {
+    var s       = Students[i];
+    var name    = s['name']    as String;
+    var scores  = s['scores']  as List<int>;
+    var bonus   = s['bonus']   as int?;
+
+    var avg      = scores.isEmpty ? 0.0 : _average(scores);
+    var finalAvg = avg + (bonus ?? 0);
+    var grade    = scores.isEmpty ? '—' : letterGrade(finalAvg);
+
+    print(
+      "${i + 1}. ${name.padRight(15)} "
+          "Scores: ${scores.length}  "
+          "Avg: ${avg.toStringAsFixed(1)}  "
+          "Grade: $grade"
+          "${bonus != null ? '  (+$bonus bonus)' : ''}",
+    );
+  }
+  print('');
+}
 void Add_Comment() {
 
   for (int i = 0; i < Students.length; i++) {
@@ -126,7 +213,11 @@ void main() {
         Add_Comment();
         break;
       case 5:
+        View_All();
+        break;
       case 6:
+        View_Report();
+        break;
       case 7:
       case 8:
         exit = false;
