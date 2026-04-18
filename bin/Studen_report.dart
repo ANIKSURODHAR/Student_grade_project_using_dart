@@ -3,6 +3,38 @@ import 'dart:io';
 List<Map<String,dynamic>>Students = [];
 final Set<String>availableSubjects={"Math","English","Science","History"};
 
+void Add_Comment() {
+
+  for (int i = 0; i < Students.length; i++) {
+    print("${i + 1}. ${Students[i]['name']}");
+  }
+
+  stdout.write("Choose a student: ");
+  var chose = int.tryParse(stdin.readLineSync() ?? '') ?? 0;
+
+  if (chose < 1 || chose > Students.length) {
+    print("Invalid student number.\n");
+    return;
+  }
+
+  // Show existing nullable comment
+  String? existing = Students[chose - 1]['comment'] as String?;
+  if (existing != null) {
+    print("Current comment: \"$existing\"");
+  }
+
+  stdout.write("Enter comment: ");
+  var comment = stdin.readLineSync() ?? '';
+
+  if (comment.trim().isEmpty) {
+    print("Comment cannot be empty.\n");
+    return;
+  }
+
+  Students[chose - 1]['comment'] = comment;
+  print("Comment saved for ${Students[chose - 1]['name']}!\n");
+}
+
 void Add_Bonus_Points(){
 
   for(int i=0;i<Students.length;i++)  print("${i+1}. ${Students[i]['name']}");
@@ -11,7 +43,7 @@ void Add_Bonus_Points(){
   int bonus=-1;
   while(bonus<1 || bonus>10) {
     stdout.write("Give bonus between 1 to 10");
-    bonus = int.parse(stdin.readLineSync() ?? '') ?? 0;
+    bonus = int.tryParse(stdin.readLineSync() ?? '') ?? 0;
     if(bonus<1 || bonus>10) print("Wrong marks submmited");
 
   }
@@ -91,6 +123,8 @@ void main() {
         Add_Bonus_Points();
         break;
       case 4:
+        Add_Comment();
+        break;
       case 5:
       case 6:
       case 7:
