@@ -61,7 +61,7 @@ void Class_Summary() {
 ''');
 }
 
-// ── HELPERS ──────────────────────────────────────────────────────────────────
+//  HELPERS
 
 double _average(List<int> scores) {
   if (scores.isEmpty) return 0.0;
@@ -307,8 +307,13 @@ void main() {
         View_Report();
         break;
       case 7:
+      case 7:
+        Class_Summary();
+        break;
       case 8:
         exit = false;
+      default:
+        print("\nInvalid option. Please enter 1–8.\n");
     }
   }while(exit);
   }
